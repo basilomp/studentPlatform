@@ -1,23 +1,27 @@
 package spring.students.portal.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import spring.students.portal.demo.exception.ResourceNotFoundException;
 import spring.students.portal.demo.model.Student;
 import spring.students.portal.demo.repository.StudentRepository;
+
 import javax.validation.Valid;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-@RequestMapping()
+@Controller
+@RequestMapping("/")
 public class StudentController {
-
     @Autowired
     private final StudentRepository studentRepository;
 
@@ -25,17 +29,36 @@ public class StudentController {
         this.studentRepository = studentRepository;
     }
 
+    @GetMapping("/signup")
+    public String showSignUpForm(Student student) {
+        return "add-student";
+    }
 
-//    @GetMapping("students/list")
-//    public String showUpdateForm(Model model) {
-//        model.addAttribute("students", studentRepository.findAll());
-//        return "index";
-//    }
 
-    @GetMapping()
+    @GetMapping("/list")
+    public String showUpdateForm(Model model) {
+        model.addAttribute("students", studentRepository.findAll());
+        return "index";
+    }
+
+    @PostMapping("add")
+    public String addStudent(@Valid Student student, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute(student);
+            return "add-student";
+        }
+
+        studentRepository.save(student);
+        return "redirect:list";
+    }
+
+
+
+    //    original methods
+    @RequestMapping(value = "/index")
     public String hello(Model model) {
         model.addAttribute("students", studentRepository.findAll());
-        return "Hello";
+        return "index";
     }
 
 
