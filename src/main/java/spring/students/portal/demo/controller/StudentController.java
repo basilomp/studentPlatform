@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/students")
 public class StudentController {
     @Autowired
     private final StudentRepository studentRepository;
@@ -29,19 +29,19 @@ public class StudentController {
         this.studentRepository = studentRepository;
     }
 
-    @GetMapping("/signup")
-    public String showSignUpForm(Student student) {
-        return "add-student";
-    }
+//    @GetMapping("/add")
+//    public String showSignUpForm(Student student) {
+//        return "add-student";
+//    }
 
 
-    @GetMapping("/list")
+    @GetMapping("edit/{id}")
     public String showUpdateForm(Model model) {
         model.addAttribute("students", studentRepository.findAll());
         return "index";
     }
 
-    @PostMapping("add")
+    @PostMapping("list/add")
     public String addStudent(@Valid Student student, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute(student);
@@ -53,21 +53,19 @@ public class StudentController {
     }
 
 
-
-    //    original methods
-    @RequestMapping(value = "/index")
-    public String hello(Model model) {
-        model.addAttribute("students", studentRepository.findAll());
-        return "index";
-    }
+//    @RequestMapping(value = "/index")
+//    public String hello(Model model) {
+//        model.addAttribute("students", studentRepository.findAll());
+//        return "index";
+//    }
 
 
-    @GetMapping("/students")
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
+//    @GetMapping("/students")
+//    public List<Student> getAllStudents() {
+//        return studentRepository.findAll();
+//    }
 
-    @GetMapping("/students/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable(value = "id") Integer studentId)
         throws ResourceNotFoundException {
             Student student = studentRepository.findById(studentId)
@@ -80,7 +78,7 @@ public class StudentController {
         return studentRepository.save(student);
     }
 
-    @PutMapping("students/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Student> updateStudent(@PathVariable(value = "id") Integer studentId,
                                                  @Valid @RequestBody Student studentDetails) throws ResourceNotFoundException {
         Student student = studentRepository.findById(studentId)
@@ -94,7 +92,7 @@ public class StudentController {
         return ResponseEntity.ok(updatedStudent);
     }
 
-    @DeleteMapping("students/{id}")
+    @DeleteMapping("/{id}")
     public Map<String, Boolean> deleteStudent(@PathVariable(value = "id") Integer studentId)
         throws ResourceNotFoundException {
         Student student = studentRepository.findById(studentId)
